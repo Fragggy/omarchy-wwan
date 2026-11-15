@@ -36,10 +36,10 @@ Panel {
   readonly property string glyph: Model.signalIcon(signal, String(info.state || ""), locked, connected)
   readonly property string downRate: Model.formatRate(rateState.download)
   readonly property string upRate: Model.formatRate(rateState.upload)
-  readonly property string barText: {
+  readonly property string barLabel: {
     if (!available) return ""
-    if (displayMode === "compact" || !connected) return glyph + " " + technologyLabel
-    return glyph + " " + technologyLabel + " ↓" + downRate + " ↑" + upRate
+    if (displayMode === "compact" || !connected) return technologyLabel
+    return technologyLabel + " ↓" + downRate + " ↑" + upRate
   }
   readonly property string statusText: {
     if (!available) return strings.t("status.unavailable")
@@ -130,8 +130,12 @@ Panel {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: root.barText
-    slotSize: Style.bar.iconSlot * (root.connected && root.displayMode === "full" && !vertical ? 5.8 : 2)
+    // BarIconButton renders `text` through OpticalGlyph. Keep it to one icon
+    // and put readable status text in its dedicated label rather than trying
+    // to render the whole label as a glyph.
+    text: root.glyph
+    labelText: root.barLabel
+    slotSize: Style.bar.iconSlot * (root.connected && root.displayMode === "full" && !vertical ? 6.5 : 2.5)
     tooltipText: root.available
       ? (String(root.info.operator || strings.t("label.mobile")) + " · " + root.statusText + (root.connected ? " · ↓ " + root.downRate + " · ↑ " + root.upRate : ""))
       : strings.t("status.unavailable")
