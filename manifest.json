@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "munzlind.wwan",
+  "name": "Mobile Broadband",
+  "version": "0.1.0",
+  "author": "munzlind",
+  "license": "MIT",
+  "description": "A standalone mobile-broadband status and control panel for Omarchy.",
+  "kinds": ["bar-widget"],
+  "entryPoints": {"barWidget": "Panel.qml"},
+  "barWidget": {
+    "displayName": "Mobile Broadband",
+    "description": "Show and control a NetworkManager mobile-broadband connection.",
+    "category": "Network",
+    "defaultSection": "right",
+    "allowMultiple": false,
+    "defaults": {
+      "profile": "O2",
+      "displayMode": "full",
+      "hideWhenUnavailable": true
+    },
+    "schema": [
+      {
+        "key": "profile",
+        "type": "string",
+        "label": "NetworkManager profile",
+        "defaultValue": "O2",
+        "description": "The saved mobile-broadband profile to connect and disconnect."
+      },
+      {
+        "key": "displayMode",
+        "type": "select",
+        "label": "Bar display",
+        "defaultValue": "full",
+        "options": [
+          {"label": "Full", "value": "full"},
+          {"label": "Compact", "value": "compact"}
+        ],
+        "description": "Full shows current download and upload rates while connected."
+      },
+      {
+        "key": "hideWhenUnavailable",
+        "type": "boolean",
+        "label": "Hide when unavailable",
+        "defaultValue": true,
+        "description": "Hide the widget when no mobile-broadband modem is present."
+      }
+    ]
+  }
+}

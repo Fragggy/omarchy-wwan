@@ -1,0 +1,16 @@
+{
+  "status.unavailable": "No modem available",
+  "status.locked": "SIM locked",
+  "status.changing": "Changing connection",
+  "status.connected": "Connected",
+  "status.disconnected": "Disconnected",
+  "label.mobile": "Mobile broadband",
+  "label.signal": "Signal",
+  "label.profile": "Profile",
+  "label.download": "Download",
+  "label.upload": "Upload",
+  "action.connect": "Connect",
+  "action.disconnect": "Disconnect",
+  "action.settings": "Settings",
+  "error.connection": "NetworkManager could not change the connection."
+}

@@ -1,0 +1,5 @@
+{
+  "name": "omarchy-wwan",
+  "private": true,
+  "scripts": { "test": "node tests/model.test.js" }
+}

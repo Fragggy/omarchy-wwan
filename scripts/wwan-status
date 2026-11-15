@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -u
+
+clean() { tr '\t\n' '  ' <<<"${1:-}"; }
+value() { sed -n "s/^$1[[:space:]]*:[[:space:]]*//p" | head -n1; }
+
+rates() {
+  local iface="${1:-}"
+  case "$iface" in ""|*/*|*'..'*) exit 1 ;; esac
+  local base="/sys/class/net/$iface/statistics"
+  [[ -r "$base/rx_bytes" && -r "$base/tx_bytes" ]] || exit 1
+  printf 'rx_bytes\t%s\ntx_bytes\t%s\n' "$(<"$base/rx_bytes")" "$(<"$base/tx_bytes")"
+}
+
+if [[ "${1:-}" == "rates" ]]; then
+  rates "${2:-}"
+  exit 0
+fi
+
+raw="$(mmcli -m any --output-keyvalue 2>/dev/null || true)"
+if [[ -z "$raw" ]]; then
+  printf 'available\t0\n'
+  exit 0
+fi
+state="$(printf '%s\n' "$raw" | value 'modem.generic.state')"
+signal="$(printf '%s\n' "$raw" | value 'modem.generic.signal-quality.value')"
+technology="$(printf '%s\n' "$raw" | value 'modem.generic.access-technologies.value\[1\]')"
+operator="$(printf '%s\n' "$raw" | value 'modem.3gpp.operator-name')"
+registration="$(printf '%s\n' "$raw" | value 'modem.3gpp.registration-state')"
+lock="$(printf '%s\n' "$raw" | value 'modem.generic.unlock-required')"
+
+profile="${WWAN_PROFILE:-O2}"
+profile_state=""
+while IFS= read -r active_name; do
+  if [[ "$active_name" == "$profile" ]]; then profile_state="activated"; break; fi
+done < <(nmcli -g NAME connection show --active 2>/dev/null || true)
+ip=""
+iface=""
+if [[ "$profile_state" == "activated" ]]; then
+  ip="$(nmcli -g IP4.ADDRESS connection show "$profile" 2>/dev/null | head -n1 || true)"
+  iface="$(nmcli -g GENERAL.DEVICES connection show "$profile" 2>/dev/null | head -n1 || true)"
+fi
+
+# ModemManager's control device (for example cdc-wdm0) has no packet counters.
+# Prefer the associated WWAN network interface when it is present.
+if [[ ! -r "/sys/class/net/$iface/statistics/rx_bytes" ]]; then
+  iface="$(find /sys/class/net -maxdepth 1 -type l \( -name 'wwan*' -o -name 'wwp*' \) -printf '%f\n' 2>/dev/null | head -n1)"
+fi
+
+printf 'available\t1\n'
+printf 'state\t%s\n' "$(clean "$state")"
+printf 'signal\t%s\n' "$(clean "$signal")"
+printf 'technology\t%s\n' "$(clean "$technology")"
+printf 'operator\t%s\n' "$(clean "$operator")"
+printf 'registration\t%s\n' "$(clean "$registration")"
+printf 'lock\t%s\n' "$(clean "$lock")"
+printf 'profile_state\t%s\n' "$(clean "$profile_state")"
+printf 'ip\t%s\n' "$(clean "$ip")"
+printf 'iface\t%s\n' "$(clean "$iface")"
