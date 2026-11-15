@@ -20,11 +20,14 @@ function connected(info) {
 }
 
 function signalIcon(signal, state, locked) {
-  if (locked) return "󰿅"
-  if (state === "failed" || state === "disabled") return "󰞃"
+  // These glyphs are the same Nerd Font Wi-Fi ramp used by Omarchy's built-in
+  // network widget. Some patched fonts render the cellular-specific glyphs as
+  // unrelated symbols, while this set is present in the active bar font.
+  if (locked) return "󰤭"
+  if (state === "failed" || state === "disabled") return "󰤭"
   var value = number(signal, -1)
-  if (value < 0) return "󰣂"
-  var icons = ["󰣂", "󰢿", "󰣀", "󰣁"]
+  if (value < 0) return "󰤮"
+  var icons = ["󰤟", "󰤢", "󰤥", "󰤨"]
   return icons[Math.max(0, Math.min(3, Math.ceil(value / 25)))]
 }
 
