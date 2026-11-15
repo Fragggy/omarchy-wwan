@@ -32,13 +32,14 @@ Panel {
   readonly property bool locked: String(info.lock || "") === "sim-pin" || String(info.lock || "") === "sim-puk"
   readonly property int signal: Math.round(Model.number(info.signal, -1))
   readonly property string technology: String(info.technology || "").toUpperCase()
+  readonly property string technologyLabel: technology || "MOBILE"
   readonly property string glyph: Model.signalIcon(signal, String(info.state || ""), locked, connected)
   readonly property string downRate: Model.formatRate(rateState.download)
   readonly property string upRate: Model.formatRate(rateState.upload)
   readonly property string barText: {
     if (!available) return ""
-    if (!connected || displayMode === "compact") return glyph
-    return glyph + " ↓" + downRate + " ↑" + upRate
+    if (displayMode === "compact" || !connected) return glyph + " " + technologyLabel
+    return glyph + " " + technologyLabel + " ↓" + downRate + " ↑" + upRate
   }
   readonly property string statusText: {
     if (!available) return strings.t("status.unavailable")
@@ -130,7 +131,7 @@ Panel {
     anchors.fill: parent
     bar: root.bar
     text: root.barText
-    slotSize: Style.bar.iconSlot * (root.connected && root.displayMode === "full" && !vertical ? 4.8 : 1)
+    slotSize: Style.bar.iconSlot * (root.connected && root.displayMode === "full" && !vertical ? 5.8 : 2)
     tooltipText: root.available
       ? (String(root.info.operator || strings.t("label.mobile")) + " · " + root.statusText + (root.connected ? " · ↓ " + root.downRate + " · ↑ " + root.upRate : ""))
       : strings.t("status.unavailable")
