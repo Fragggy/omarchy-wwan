@@ -32,7 +32,7 @@ Panel {
   readonly property bool locked: String(info.lock || "") === "sim-pin" || String(info.lock || "") === "sim-puk"
   readonly property int signal: Math.round(Model.number(info.signal, -1))
   readonly property string technology: String(info.technology || "").toUpperCase()
-  readonly property string glyph: Model.signalIcon(signal, String(info.state || ""), locked)
+  readonly property string glyph: Model.signalIcon(signal, String(info.state || ""), locked, connected)
   readonly property string downRate: Model.formatRate(rateState.download)
   readonly property string upRate: Model.formatRate(rateState.upload)
   readonly property string barText: {

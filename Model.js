@@ -19,12 +19,15 @@ function connected(info) {
   return String((info || {}).profile_state || "").toLowerCase() === "activated"
 }
 
-function signalIcon(signal, state, locked) {
+function signalIcon(signal, state, locked, isConnected) {
   // These glyphs are the same Nerd Font Wi-Fi ramp used by Omarchy's built-in
   // network widget. Some patched fonts render the cellular-specific glyphs as
   // unrelated symbols, while this set is present in the active bar font.
   if (locked) return "󰤭"
   if (state === "failed" || state === "disabled") return "󰤭"
+  // Registered is not the same as carrying data. Make the inactive state
+  // immediately recognizable instead of showing reassuring signal bars.
+  if (!isConnected) return "󰤮"
   var value = number(signal, -1)
   if (value < 0) return "󰤮"
   var icons = ["󰤟", "󰤢", "󰤥", "󰤨"]
