@@ -39,7 +39,7 @@ Panel {
   readonly property string barLabel: {
     if (!available) return ""
     if (displayMode === "compact" || !connected) return technologyLabel
-    return technologyLabel + " ↓" + downRate + " ↑" + upRate
+    return technologyLabel + " ▲" + Model.formatRateCompact(rateState.download) + " ▼" + Model.formatRateCompact(rateState.upload)
   }
   readonly property string statusText: {
     if (!available) return strings.t("status.unavailable")
