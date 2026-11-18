@@ -24,6 +24,8 @@ Panel {
 
   property var info: ({})
   property var rateState: ({ iface: "", rx: 0, tx: 0, time: 0, download: 0, upload: 0 })
+  property real sessionRx: 0
+  property real sessionTx: 0
   property bool actionPending: false
   property string lastError: ""
 
@@ -36,6 +38,7 @@ Panel {
   readonly property string glyph: Model.signalIcon(signal, String(info.state || ""), locked, connected)
   readonly property string downRate: Model.formatRate(rateState.download)
   readonly property string upRate: Model.formatRate(rateState.upload)
+  readonly property string sessionTotal: Model.formatBytes(sessionRx + sessionTx)
   readonly property string barLabel: {
     if (!available) return ""
     return technologyLabel
@@ -58,7 +61,11 @@ Panel {
     var next = Model.parseTabValues(raw)
     if (Object.keys(next).length === 0) return
     info = next
-    if (!Model.connected(next)) rateState = { iface: "", rx: 0, tx: 0, time: 0, download: 0, upload: 0 }
+    if (!Model.connected(next)) {
+      rateState = { iface: "", rx: 0, tx: 0, time: 0, download: 0, upload: 0 }
+      sessionRx = 0
+      sessionTx = 0
+    }
   }
 
   function refreshRates() {
@@ -72,7 +79,22 @@ Panel {
     var sample = Model.parseTabValues(raw)
     if (sample.rx_bytes === undefined || sample.tx_bytes === undefined) return
     sample.iface = String(info.iface || "")
-    rateState = Model.nextRates(rateState, sample, Date.now())
+    var previous = rateState
+    var next = Model.nextRates(previous, sample, Date.now())
+    // Accumulate this connection's data. A lower counter means the interface
+    // reset its statistics, so the new value itself is the delta, not a spike.
+    var rxNow = Number(sample.rx_bytes) || 0
+    var txNow = Number(sample.tx_bytes) || 0
+    var prevRx = Number(previous.rx) || 0
+    var prevTx = Number(previous.tx) || 0
+    if (previous.iface === next.iface) {
+      sessionRx += Math.max(0, rxNow >= prevRx ? rxNow - prevRx : rxNow)
+      sessionTx += Math.max(0, txNow >= prevTx ? txNow - prevTx : txNow)
+    } else if (previous.iface !== "" || next.iface !== "") {
+      sessionRx = 0
+      sessionTx = 0
+    }
+    rateState = next
   }
 
   function setConnection(up) {
@@ -182,6 +204,12 @@ Panel {
         spacing: Style.space(20)
         InfoPair { width: (parent.width - parent.spacing) / 2; label: strings.t("label.download"); value: "↓ " + root.downRate }
         InfoPair { width: (parent.width - parent.spacing) / 2; label: strings.t("label.upload"); value: "↑ " + root.upRate }
+      }
+      Row {
+        visible: root.connected
+        width: parent.width
+        spacing: Style.space(20)
+        InfoPair { width: (parent.width - parent.spacing) / 2; label: strings.t("label.session"); value: root.sessionTotal }
       }
 
       Text {

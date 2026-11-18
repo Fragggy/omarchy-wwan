@@ -60,4 +60,13 @@ function formatRate(bytes) {
   return value.toFixed(digits) + " " + units[index]
 }
 
-if (typeof module !== "undefined") module.exports = { parseTabValues, connected, signalIcon, nextRates, formatRate }
+// Smart byte total for session consumption: 936 MB, 2.4 GB, 412 KB, 890 B.
+function formatBytes(bytes) {
+  var value = Math.max(0, number(bytes, 0))
+  if (value >= 1000 * 1000 * 1000) return (value / (1000 * 1000 * 1000)).toFixed(value >= 10 * 1000 * 1000 * 1000 ? 0 : 1) + " GB"
+  if (value >= 1000 * 1000) return (value / (1000 * 1000)).toFixed(value >= 100 * 1000 * 1000 ? 0 : 1) + " MB"
+  if (value >= 1000) return (value / 1000).toFixed(value >= 100 * 1000 ? 0 : 1) + " KB"
+  return value.toFixed(0) + " B"
+}
+
+if (typeof module !== "undefined") module.exports = { parseTabValues, connected, signalIcon, nextRates, formatRate, formatBytes }

@@ -9,6 +9,7 @@
   "label.profile": "Profile",
   "label.download": "Download",
   "label.upload": "Upload",
+  "label.session": "This session",
   "action.connect": "Connect",
   "action.disconnect": "Disconnect",
   "action.settings": "Settings",
