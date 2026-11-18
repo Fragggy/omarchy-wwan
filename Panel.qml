@@ -38,8 +38,7 @@ Panel {
   readonly property string upRate: Model.formatRate(rateState.upload)
   readonly property string barLabel: {
     if (!available) return ""
-    if (displayMode === "compact" || !connected) return technologyLabel
-    return technologyLabel + " ▲" + Model.formatRateCompact(rateState.download) + " ▼" + Model.formatRateCompact(rateState.upload)
+    return technologyLabel
   }
   readonly property string statusText: {
     if (!available) return strings.t("status.unavailable")
@@ -135,7 +134,7 @@ Panel {
     // to render the whole label as a glyph.
     text: root.glyph
     labelText: root.barLabel
-    slotSize: Style.bar.iconSlot * (root.connected && root.displayMode === "full" && !vertical ? 6.5 : 2.5)
+    slotSize: Style.bar.iconSlot * 2.5
     tooltipText: root.available
       ? (String(root.info.operator || strings.t("label.mobile")) + " · " + root.statusText + (root.connected ? " · ↓ " + root.downRate + " · ↑ " + root.upRate : ""))
       : strings.t("status.unavailable")

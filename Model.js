@@ -60,14 +60,4 @@ function formatRate(bytes) {
   return value.toFixed(digits) + " " + units[index]
 }
 
-// Compact form for the narrow bar: 1.5M / 240k instead of 1.50 MB/s / 240 KB/s.
-function formatRateCompact(bytes) {
-  var value = Math.max(0, number(bytes, 0))
-  var units = ["B", "k", "M", "G"]
-  var index = 0
-  while (value >= 1024 && index < units.length - 1) { value /= 1024; index++ }
-  var digits = value >= 100 || index === 0 ? 0 : (value >= 10 ? 1 : 2)
-  return value.toFixed(digits) + units[index]
-}
-
-if (typeof module !== "undefined") module.exports = { parseTabValues, connected, signalIcon, nextRates, formatRate, formatRateCompact }
+if (typeof module !== "undefined") module.exports = { parseTabValues, connected, signalIcon, nextRates, formatRate }
