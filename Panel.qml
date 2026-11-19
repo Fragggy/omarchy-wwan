@@ -157,7 +157,6 @@ Panel {
     labelText: root.barLabel
     labelFontFamily: "Nimbus Sans Narrow"
     labelFontSize: Style.bar.iconFont
-    slotSize: Style.bar.iconSlot * 2.5
     tooltipText: root.available
       ? (String(root.info.operator || strings.t("label.mobile")) + " · " + root.statusText + (root.connected ? " · ↓ " + root.downRate + " · ↑ " + root.upRate : ""))
       : strings.t("status.unavailable")

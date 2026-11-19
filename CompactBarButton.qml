@@ -14,7 +14,6 @@ WidgetButton {
   // Condensed label font, with the bar font as a fallback when unavailable.
   property string labelFontFamily: fontFamily
   property real labelFontSize: fontSize
-  property real slotSize: Style.bar.iconSlot
   property real opticalSize: Style.bar.iconCanvas
   property real iconSize: Math.min(Style.bar.iconSize, opticalSize)
   readonly property real visualIconSize: Style.bar.iconSize
@@ -22,8 +21,15 @@ WidgetButton {
 
   labelVisible: false
   hasVisualContent: text !== "" || labelText !== ""
-  fixedWidth: vertical ? -1 : slotSize
-  fixedHeight: vertical ? slotSize : -1
+
+  // A single icon next to a short label: keep the side margins tighter than
+  // WidgetButton's text default so the widget doesn't read as a wide gap.
+  horizontalMargin: 6
+
+  // Size to the painted content rather than a fixed icon-slot count, so a
+  // short condensed label like "LTE" doesn't leave empty padding either side.
+  implicitWidth: content.width + scaledHorizontalMargin * 2
+  implicitHeight: barSize
 
   Item {
     id: content
