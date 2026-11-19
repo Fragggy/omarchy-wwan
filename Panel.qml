@@ -147,15 +147,16 @@ Panel {
   Timer { interval: 1000; running: root.connected; repeat: true; triggeredOnStart: true; onTriggered: root.refreshRates() }
   Timer { id: actionRefresh; interval: 1200; onTriggered: root.refresh() }
 
-  BarIconButton {
+  CompactBarButton {
     id: button
     anchors.fill: parent
     bar: root.bar
-    // BarIconButton renders `text` through OpticalGlyph. Keep it to one icon
-    // and put readable status text in its dedicated label rather than trying
-    // to render the whole label as a glyph.
+    // Icon stays in the bar's Nerd Font; the label uses a condensed face so
+    // "LTE" takes less horizontal space than the bar's monospace font.
     text: root.glyph
     labelText: root.barLabel
+    labelFontFamily: "Nimbus Sans Narrow"
+    labelFontSize: Style.bar.iconFont
     slotSize: Style.bar.iconSlot * 2.5
     tooltipText: root.available
       ? (String(root.info.operator || strings.t("label.mobile")) + " · " + root.statusText + (root.connected ? " · ↓ " + root.downRate + " · ↑ " + root.upRate : ""))
